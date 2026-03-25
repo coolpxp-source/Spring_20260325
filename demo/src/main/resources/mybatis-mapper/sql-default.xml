@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mapper namespace="com.example.demo.mapper.DefaultMapper"> <!-- implement 하기 위해서는 파일의 풀 경로를 넣어야한다. 패키지 경로+파일명-->
+	<select id="selectUserList" resultType="com.example.demo.model.User"> <!-- 오버라이딩-->
+		SELECT *
+		FROM TBL_USER
+	</select>
+
+</mapper>
