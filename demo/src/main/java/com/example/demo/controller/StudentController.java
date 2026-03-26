@@ -11,43 +11,38 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dao.DefaultService;
+import com.example.demo.dao.StudentService;
 import com.google.gson.Gson;
 
 @Controller
-public class DefaultController {
+public class StudentController {
 	
 	@Autowired // 서버가 실행될 때 선언된 객체를 하나 만듦(auto) ->모든 사용자가 하나의 객체를 돌려쓰게 함.
-	DefaultService defaultService; //객체 선언
+	StudentService studentService; //객체 선언
 	
-	@RequestMapping("/default.do") // 주소 
+	@RequestMapping("/stu-list.do") // 주소 
 	public String test(Model model) throws Exception{
-		return "/default"; // 파일명
+		return "/student/stu-list"; // 파일명
 	}
 	
-	@RequestMapping("/test.do") // 주소 
-	public String test2(Model model) throws Exception{
-		return "/test"; // 파일명
-	}
-	
-	
-	@RequestMapping(value = "/default.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody // ajax->json 형태로 받을 때 
-	public String login(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		return new Gson().toJson(resultMap); 
-	}
-	
-	@RequestMapping(value = "/test.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/stu-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody // ajax->json 형태로 받을 때 
 	public String test(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		
-		resultMap = defaultService.getUserList();
+		resultMap = studentService.getStudentList();
 		
 		return new Gson().toJson(resultMap); 
 	}
 	
-	
+	@RequestMapping(value = "/stu-remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String remove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		System.out.println(map);
+		resultMap = studentService.removeStudent(map);
+		
+		return new Gson().toJson(resultMap); 
+	}
 	
 }
