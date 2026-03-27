@@ -2,12 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.StudentMapper"> 
-
-    <select id="selectStudentList" resultType="com.example.demo.model.Student">
-        SELECT * FROM STUDENT
+	<!--전체 리스트 조회-->
+    <select id="selectStudentList" parameterType="hashmap" resultType="com.example.demo.model.Student">
+        SELECT * 
+        FROM STUDENT
+        WHERE (STU_NO LIKE CONCAT('%',#{keyword},'%') OR STU_NAME LIKE CONCAT('%',#{keyword},'%'))
+        <if test="dept != '' and dept != null">
+        	AND STU_DEPT = #{dept}
+        </if>
+        <!-- ex> 2013 검색 -> %2013%-->
     </select>
+    <!--학생 삭제-->
 	<delete id="deleteStudent" parameterType="hashmap"> <!--delete, insert .. 자동으로 return해줌-->
 		DELETE FROM STUDENT WHERE STU_NO = #{stuNo}
 	</delete>
-
+	<!--중복조회 (where 조건 추가)-->
+	<select id="selectStudent" parameterType="hashmap" resultType="com.example.demo.model.Student">
+        SELECT * 
+        FROM STUDENT
+        WHERE STU_NO = #{stuNo}
+    </select>
+    <insert id="insertStudent" parameterType="hashmap">
+    	INSERT INTO STUDENT
+    	VALUES(#{stuNo}, #{stuName}, #{stuDept}, #{stuGrade}, NULL, #{stuGender}, NULL, NULL)
+    </insert>
 </mapper>
