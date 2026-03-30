@@ -14,6 +14,8 @@ import com.example.demo.dao.UserService;
 import com.example.demo.model.User;
 import com.google.gson.Gson;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class UserController {
 	
@@ -29,6 +31,28 @@ public class UserController {
 	public String join(Model model) throws Exception{
 		return "/User/User-sign-up"; // 파일명, jsp 생략가능
 	}
+	
+	@RequestMapping("/addr.do") // 주소 
+	public String addr(Model model) throws Exception{
+		return "/User/jusoPopup"; // 파일명, jsp 생략가능
+	}
+	
+	// === 복습 (User 테이블) ===
+	@RequestMapping("/user/list.do") // 주소 
+	public String list(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		return "/User/User-list"; // 파일명
+	}
+	
+	@RequestMapping(value = "/user/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String list(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			resultMap = userService.getUserList(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	// =======================
+	
 	
 	@RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody // ajax->json 형태로 받을 때 
@@ -56,6 +80,16 @@ public class UserController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		System.out.println(map);
 		resultMap  = userService.checkUser(map);
+		
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/user/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String remove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		System.out.println(map);
+		resultMap  = userService.removeUser(map);
 		
 		return new Gson().toJson(resultMap); 
 	}

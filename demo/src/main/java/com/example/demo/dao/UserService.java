@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.common.Message;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.User;
 
@@ -76,5 +77,39 @@ public class UserService {
 		
 		return resultMap;
 	}
-
+	
+	// ========= 복습 =========
+	public HashMap<String, Object> getUserList(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			List<User> list = userMapper.selectUserList(map);
+			resultMap.put("list", list);
+			resultMap.put("result", "success");
+			resultMap.put("message", Message.MSG_ADD);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+			resultMap.put("message", Message.MSG_SERVER_ERR);
+		}
+		return resultMap;
+	}
+	
+	// 유저 삭제
+	public HashMap<String, Object> removeUser(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			 int result = userMapper.deleteUser(map); 
+			resultMap.put("result", "success");
+			resultMap.put("message", Message.MSG_REMOVE);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+			resultMap.put("message", Message.MSG_SERVER_ERR);
+		}
+		return resultMap;
+	}
 }

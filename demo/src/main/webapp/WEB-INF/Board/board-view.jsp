@@ -90,7 +90,8 @@
             fnGetBoard: function () {
                 let self = this;
                 let param = {
-                    boardNo : self.boardNo
+                    boardNo : self.boardNo,
+                    kind : "view"
                 };
                 $.ajax({
                     url: "http://localhost:8080/board/info.dox",
