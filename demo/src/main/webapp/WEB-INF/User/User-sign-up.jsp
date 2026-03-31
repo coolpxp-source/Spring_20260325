@@ -25,7 +25,7 @@
             background-color: azure;
         }
         input{
-            width: 100px;
+            width: 200px;
             height: 15px;
             border-radius: 10px;
             border: 1px solid gray;
@@ -40,16 +40,19 @@
         }
         .inputbtn{
             margin-left: 15px;
+            padding: 5px;
         }
         .inputbtn2{
             margin-left: 30px;
+             padding: 5px;
         }
         .join-btn{
             margin: 5px 20px;
+             padding: 5px;
         }
-        #join-title{
+        /* #join-title{
             text-align: center;
-        }
+        } */
     </style>
 </head>
 <body>
@@ -66,6 +69,19 @@
             </div>
             <div>
                 <label><span class="title">이름 :</span><input v-model="userName" class="inputbtn2"></label>
+            </div>
+            <div>
+                핸드폰 인증 : 
+                <template v-if="!phoneFlg">
+                    <input v-model="phoneNumber" placeholder="핸드폰 번호를 입력하세요.">
+                    <button @click="fnAuth()">인증번호 발송</button>
+                </template>
+                <template v-else>
+                    <template v-if="!ranFlg">
+                        <input v-model="phoneAuth" :placeholder="timer">
+                        <button @click="fnAuthCheck()">인증번호 확인</button>
+                    </template>
+                </template>
             </div>
             <div>
                 <label>
@@ -94,13 +110,26 @@
                 userId : "",
                 pwd : "",
                 userName : "",
-                addr : ""
+                addr : "",
+                //랜덤문자 전송
+                phoneNumber : "",
+                ranStr : "", // 문자로 받은 랜덤 숫자 
+                phoneAuth : "", // 내가 입력한 숫자
+                phoneFlg : false,
+                ranFlg : false, // 인증번호 정상 입력 시 true
+                //타이머
+                count : 180,
+                timer : ""
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             fnJoin: function () {
                 let self = this;
+                if(!self.ranFlg){
+                    alert("문자 인증 후 진행해주세요.");
+                    return;
+                }
                 let param = {
                     userId : self.userId,
                     pwd : self.pwd,
@@ -133,6 +162,50 @@
             },
             fnAddr : function(){
                 window.open("/addr.do","addr","width=500, height=500"); // 팝업 띄우기
+            },
+            fnAuth : function(){
+                let self = this;
+                let param = {
+                    phoneNumber : self.phoneNumber
+                };
+                $.ajax({
+                    url: "http://localhost:8080/send-one",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        // console.log(data);
+                        if(data.res.groupInfo.status == "SENDING"){
+                            alert("문자가 전송되었습니다.");
+                            self.phoneFlg = true;
+                            self.ranStr = data.ranStr;
+                            setInterval(self.fnTimer,1000); // 타이머 시작
+                        }else{
+                            alert("에러가 발생했습니다.");
+                        }
+                    }
+                });
+            },
+            fnTimer :  function(){
+                let self = this;
+                let min = "";
+                let sec = "";
+                min = parseInt(self.count / 60);
+                sec = parseInt(self.count % 60);
+                
+                min = min < 10 ? "0" + min : min;
+                sec = sec < 10 ? "0" + sec : sec;
+                self.timer = min + ":" + sec
+                self.count--;
+            },
+            fnAuthCheck : function(){
+                let self = this;
+                if(self.ranStr == self.phoneAuth){
+                    alert("인증되었습니다.");
+                    self.ranFlg = true;
+                }else{
+                    alert("인증번호를 다시 확인해주세요.");
+                }
             }
         }, // methods
         mounted() {
