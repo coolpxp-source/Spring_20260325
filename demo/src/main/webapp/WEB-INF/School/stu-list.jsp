@@ -17,10 +17,18 @@
             text-align: center;
         }
         th{
-            background-color: paleturquoise;
+            background-color: #cce5ff;
         }
         tr:nth-child(even){
-            background-color: azure;
+            background-color: #daecff;
+        }
+        button{
+            box-shadow: 1px 1px 2px gray;
+            margin-top: 10px;
+        }
+        select{
+            box-shadow: 1px 1px 2px gray;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -55,6 +63,7 @@
                             <th>학과</th>
                             <th>부전공</th>
                             <th>담당교수</th>
+                            <th>삭제</th>
                         </tr>
                         <tr v-for="item in list">
                             <td>{{item.stuNo}}</td>
@@ -65,6 +74,7 @@
                             <td>{{item.dName2}}</td>
                             <td>{{item.dName3}}</td> 
                             <td>{{item.pName}}</td>
+                            <td><button @click="fnRemove(item.stuNo)">삭제</button></td>
                         </tr>
                     </table>
                 </div>
@@ -122,6 +132,22 @@
                     data: param,
                     success: function (data) {
                         // console.log(data);
+                    }
+                });
+            },
+            fnRemove: function (stuNo) {
+                let self = this;
+                let param = {
+                    stuNo : stuNo // 인자로 받은 stuNo를 보내줌.
+                };
+                $.ajax({
+                    url: "http://localhost:8080/stu/remove.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        alert(data.message);
+                        self.fnGetList();
                     }
                 });
             }

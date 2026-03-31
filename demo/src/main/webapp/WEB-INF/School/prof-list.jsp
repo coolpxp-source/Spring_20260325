@@ -17,10 +17,24 @@
             text-align: center;
         }
         th{
-            background-color: paleturquoise;
+            background-color: #a0ceff;
         }
         tbody td:first-child{
-             background-color: azure;
+             background-color: #cce5ff;
+        }
+        #prof-add{
+            margin-left: 464px;
+        }
+        button{
+            box-shadow: 1px 1px 2px gray;
+            margin-top: 10px;
+        }
+        select{
+            box-shadow: 1px 1px 2px gray;
+            margin-bottom: 10px;
+        }
+        .selected-row {
+        background-color: #cce5ff; 
         }
     </style>
 </head>
@@ -30,6 +44,7 @@
          <div>
             <table>
                 <tr>
+                    <th>선택</th>
                     <th>교수번호</th>
                     <th>이름</th>
                     <th>직급</th>
@@ -51,7 +66,8 @@
                             <option v-for="item in deptList" :value="item.deptNo">{{item.dName}}</option>
                         </select>
                 </div>
-                <tr v-for="item in list">
+                <tr v-for="item in list" :class="{ 'selected-row': profNo === item.profNo }">
+                    <td><input type="radio" name="remove-btn" v-model="profNo" :value="item.profNo"></td>
                     <td>{{item.profNo}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.position}}</td>
@@ -60,8 +76,9 @@
                     <td>{{item.dName3}}</td>
                 </tr>
             </table>
-            <div>
-                <a href="/prof/add.do"><button>교수 추가</button></a>
+            <div class="btn-area">
+                <button @click="fnProfDelete()">교수 삭제</button>
+                <a href="/prof/add.do"><button id="prof-add">교수 추가</button></a>
             </div>
          </div>
     </div>
@@ -76,7 +93,9 @@
                 list : [],
                 deptList : [],
                 position : "",
-                deptNo : ""
+                deptNo : "",
+                profNo : "",
+                selectedRow: null
             };
         },
         methods: {
@@ -96,6 +115,27 @@
                         console.log(data);
                         self.list = data.list;
                         self.deptList = data.deptList;
+                    }
+                });
+            },
+            fnProfDelete: function () {
+                let self = this;
+                if(!confirm("정말 삭제하시겠습니까?")){
+                    return;
+                }
+                let param = {
+                    profNo : self.profNo
+                };
+                $.ajax({
+                    url: "http://localhost:8080/prof/remove.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        alert(data.message);
+                        self.profNo = "";
+                        self.fnGetList();
                     }
                 });
             }

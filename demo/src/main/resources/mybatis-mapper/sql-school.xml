@@ -57,4 +57,20 @@
     	VALUES(#{profNo},#{profName},#{position},#{pay},#{deptNo})
     </insert>
     
+    <select id="selectStu" parameterType="hashmap" resultType="com.example.demo.model.Stu">
+    	SELECT *
+    	FROM STU
+    	WHERE STUNO = #{stuNo}
+    </select>
+    
+    <delete id="deleteStu" parameterType="hashmap">
+    	DELETE FROM STU
+    	WHERE STUNO = #{stuNo}
+    </delete>
+    
+    <delete id="deleteProf" parameterType="hashmap">
+    	DELETE FROM PROFESSOR
+    	WHERE PROFNO = #{profNo}
+    </delete>
+    
 </mapper>

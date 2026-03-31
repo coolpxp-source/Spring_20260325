@@ -29,7 +29,9 @@
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
         <h3>학생 추가</h3>
          <div id="container">
-            <label>학번 : <input v-model="stuNo"></label>
+            <label>학번 : <input v-model="stuNo" maxlength="4" @input="fnStuNoInput()"></label>
+            <span v-if="stuFlg" style="color: blue;">{{message}}</span>
+            <span v-else style="color: red;">{{message}}</span>
         </div>
         <div>
             <label>이름 : <input v-model="stuName"></label>
@@ -80,7 +82,9 @@
                 deptList : [],
                 profList : [],
                 deptNo : "",
-                profNo : ""
+                profNo : "",
+                message : "",
+                stuFlg : false
             };
         },
         methods: {
@@ -123,7 +127,8 @@
                     stuName : self.stuName,
                     grade : self.grade,
                     deptNo : self.deptNo,
-                    profNo : self.profNo
+                    profNo : self.profNo,
+                    stuFlg : false
                 };
                 $.ajax({
                     url: "http://localhost:8080/stu/add.dox",
@@ -137,13 +142,37 @@
                         }
                     }
                 });
-            }
+            },
+            fnStuNoInput: function () {
+                let self = this;
+                self.stuNo = self.stuNo.replace(/[^0-9]/g, '');
+
+                if(self.stuNo.length != 4){
+                    self.message = "학번은 4글자 입니다.";
+                    return;
+                }
+                let param = {
+                    stuNo : self.stuNo
+                };
+                $.ajax({
+                    url: "http://localhost:8080/stu/check.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                    //   console.log(data.message);
+                    self.message = data.message;
+                    self.stuFlg = data.stuFlg;
+                    }
+                });
+            },
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fnDeptList();
             self.fnProfList();
+            self.fnStuNoInput();
         }
     });
 

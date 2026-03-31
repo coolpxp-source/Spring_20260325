@@ -82,6 +82,30 @@ public class SchoolController {
 		resultMap = schoolService.addProf(map);
 		return new Gson().toJson(resultMap); 
 	}
-		
+	
+	// ajax가 호출하는 주소   
+	@RequestMapping(value = "/stu/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.getStu(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/stu/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String remove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.removeStu(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/prof/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String remove2(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.removeProf(map);
+		return new Gson().toJson(resultMap); 
+	}
 	
 }
