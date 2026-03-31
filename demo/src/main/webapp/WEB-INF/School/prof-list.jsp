@@ -33,17 +33,36 @@
                     <th>교수번호</th>
                     <th>이름</th>
                     <th>직급</th>
+                    <th>급여</th>
                     <th>학부</th>
                     <th>학과</th>
                 </tr>
+                <!-- 직급별 셀렉트 박스 & 학과 -->
+                <div class="search-area">
+                    직급 : 
+                    <select v-model="position" @change="fnGetList()">
+                        <option value="">:: 전체 ::</option>
+                        <option value="전임강사">전임강사</option>
+                        <option value="정교수">정교수</option>
+                        <option value="조교수">조교수</option>
+                    </select>
+                    학과 : <select v-model="deptNo" @change="fnGetList()">
+                            <option value="">:: 전체 ::</option>
+                            <option v-for="item in deptList" :value="item.deptNo">{{item.dName}}</option>
+                        </select>
+                </div>
                 <tr v-for="item in list">
                     <td>{{item.profNo}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.position}}</td>
+                    <td>{{item.pay}}</td>
                     <td>{{item.dName2}}</td>
                     <td>{{item.dName3}}</td>
                 </tr>
             </table>
+            <div>
+                <a href="/prof/add.do"><button>교수 추가</button></a>
+            </div>
          </div>
     </div>
 </body>
@@ -54,14 +73,20 @@
         data() {
             return {
                 // 변수 - (key : value)
-                list : []
+                list : [],
+                deptList : [],
+                position : "",
+                deptNo : ""
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             fnGetList: function () {
                 let self = this;
-                let param = {};
+                let param = {
+                    position : self.position,
+                    deptNo : self.deptNo
+                };
                 $.ajax({
                     url: "http://localhost:8080/prof/list.dox",
                     dataType: "json",
@@ -70,6 +95,7 @@
                     success: function (data) {
                         console.log(data);
                         self.list = data.list;
+                        self.deptList = data.deptList;
                     }
                 });
             }

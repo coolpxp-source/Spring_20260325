@@ -23,4 +23,5 @@ public class Stu {
 	// 담당 교수 이름 join professor table
 	String pName;
 	
+	
 }

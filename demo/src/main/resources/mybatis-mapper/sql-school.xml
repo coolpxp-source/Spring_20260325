@@ -11,6 +11,13 @@
     	FROM PROFESSOR P
     	INNER JOIN DEPARTMENT D1 ON P.DEPTNO = D1.DEPTNO
     	INNER JOIN DEPARTMENT D2 ON D1.PART = D2.DEPTNO
+    	WHERE 1=1
+    	<if test="position != null and position != ''">
+			AND P.POSITION = #{position}
+		</if>
+		<if test="deptNo != null and deptNo != ''">
+			AND P.DEPTNO = #{deptNo}
+		</if>
     </select>
     
     <select id="selectStuList" parameterType="hashmap" resultType="com.example.demo.model.Stu">
@@ -29,6 +36,25 @@
 		<if test="grade != null and grade != ''">
 			AND S.GRADE = #{grade}
 		</if>
+		<if test="deptNo != null and deptNo != ''">
+			AND S.DEPTNO1 = #{deptNo}
+		</if>
     </select>
-  
+    
+    <select id="selectDeptList" parameterType="hashmap" resultType="com.example.demo.model.Dept">
+    	SELECT *
+		FROM DEPARTMENT
+		WHERE DNAME LIKE '%학과'
+    </select>
+    
+    <insert id="insertStu" parameterType="hashmap">
+    	INSERT INTO STU(STUNO, NAME, GRADE, DEPTNO1, PROFNO)
+    	VALUES(#{stuNo},#{stuName},#{grade},#{deptNo},#{profNo})
+    </insert>
+    
+    <insert id="insertProf" parameterType="hashmap">
+    	INSERT INTO PROFESSOR(PROFNO, NAME, POSITION, PAY, DEPTNO)
+    	VALUES(#{profNo},#{profName},#{position},#{pay},#{deptNo})
+    </insert>
+    
 </mapper>
