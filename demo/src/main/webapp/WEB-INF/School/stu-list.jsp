@@ -17,10 +17,10 @@
             text-align: center;
         }
         th{
-            background-color: #cce5ff;
+            background-color: #fffecc;
         }
         tr:nth-child(even){
-            background-color: #daecff;
+            background-color: #fffedd;
         }
         button{
             box-shadow: 1px 1px 2px gray;
@@ -67,7 +67,9 @@
                         </tr>
                         <tr v-for="item in list">
                             <td>{{item.stuNo}}</td>
-                            <td>{{item.name}}</td>
+                            <td>
+                                <a href="javascript:;" @click="fnView(item.stuNo)">{{item.name}}</a>
+                            </td>
                             <td>{{item.id}}</td>
                             <td>{{item.grade}}</td>
                             <td>{{item.dName1}}</td>
@@ -136,6 +138,9 @@
                 });
             },
             fnRemove: function (stuNo) {
+                if(!confirm("정말 삭제하시겠습니까?")){
+                     return;
+                }
                 let self = this;
                 let param = {
                     stuNo : stuNo // 인자로 받은 stuNo를 보내줌.
@@ -150,6 +155,9 @@
                         self.fnGetList();
                     }
                 });
+            },
+            fnView : function(stuNo){
+                pageChange("/stu/view.do",{stuNo : stuNo});
             }
         }, // methods
         mounted() {

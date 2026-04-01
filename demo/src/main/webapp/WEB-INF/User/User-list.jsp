@@ -38,7 +38,7 @@
                 </tr>
                 <tr v-for="item in list">
                     <td><input type="radio" name="user" v-model="selectUserId" :value="item.userId"></td>
-                    <td>{{item.userId}}</td>
+                   <td> <a href="javascript:;" @click="fnUserView(item.userId)">{{item.userId}}</a></td>
                     <td>{{item.userName}}</td>
                     <td>
                         <span v-if="item.gender == 'M'">남자</span>
@@ -118,6 +118,9 @@
                         self.fnGetList();
                     }
                 });
+            },
+            fnUserView : function(userId){
+                pageChange("/user/view.do",{userId : userId})
             }
         }, // methods
         mounted() {

@@ -38,6 +38,34 @@ public class SchoolController {
 	public String add2(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		return "/School/prof-add"; // 파일명
 	}
+	
+	@RequestMapping("/stu/view.do") // 주소 
+	public String veiw(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map);
+		request.setAttribute("map", map);
+		return "/School/stu-view"; // 파일명
+	}
+	
+	@RequestMapping("/prof/view.do") // 주소 
+	public String veiw2(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map);
+		request.setAttribute("map", map);
+		return "/School/prof-view"; // 파일명
+	}
+	
+	@RequestMapping("/stu/edit.do") // 주소 
+	public String edit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map);
+		request.setAttribute("map", map);
+		return "/School/stu-edit"; // 파일명
+	}
+	
+	@RequestMapping("/prof/edit.do") // 주소 
+	public String edit2(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map);
+		request.setAttribute("map", map);
+		return "/School/prof-edit"; // 파일명
+	}
 		
 	@RequestMapping(value = "/prof/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody // ajax->json 형태로 받을 때 
@@ -105,6 +133,38 @@ public class SchoolController {
 	public String remove2(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = schoolService.removeProf(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/stu/info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String info(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.getStuInfo(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/prof/info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String info2(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.getProfInfo(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/stu/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String edit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.editStu(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/prof/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String edit2(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = schoolService.editProf(map);
 		return new Gson().toJson(resultMap); 
 	}
 	

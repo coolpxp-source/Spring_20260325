@@ -8,4 +8,12 @@ public class User {
 	String userName;
 	String pwd;
 	String gender;
+	
+	// 첨부파일
+	int fileNo;
+	String filePath;
+	String fileName;
+	String fileOrgName;
+	String fileSize;
+	String fileETC;
 }

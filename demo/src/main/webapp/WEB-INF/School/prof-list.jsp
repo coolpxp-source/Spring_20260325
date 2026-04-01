@@ -69,7 +69,9 @@
                 <tr v-for="item in list" :class="{ 'selected-row': profNo === item.profNo }">
                     <td><input type="radio" name="remove-btn" v-model="profNo" :value="item.profNo"></td>
                     <td>{{item.profNo}}</td>
-                    <td>{{item.name}}</td>
+                    <td>
+                        <a href="javascript:;" @click="fnProfView(item.profNo)">{{item.name}}</a>
+                    </td>
                     <td>{{item.position}}</td>
                     <td>{{item.pay}}</td>
                     <td>{{item.dName2}}</td>
@@ -138,6 +140,9 @@
                         self.fnGetList();
                     }
                 });
+            },
+            fnProfView : function(profNo){
+                pageChange("/prof/view.do",{profNo : profNo});
             }
         }, // methods
         mounted() {

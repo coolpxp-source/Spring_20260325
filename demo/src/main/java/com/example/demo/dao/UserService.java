@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.common.Message;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.model.Board;
 import com.example.demo.model.User;
 
 @Service
@@ -18,6 +19,9 @@ public class UserService {
 	public HashMap<String, Object> login(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		User user = userMapper.selectUser(map);
+		int file = userMapper.selectUserProfile(map);
+		
+		resultMap.put("file", file); //첨부파일 목록
 		if(user != null) {
 //			ooo님 환영합니다.
 			if(user.getPwd().equals(map.get("pwd"))) {
@@ -84,6 +88,7 @@ public class UserService {
 		
 		try {
 			List<User> list = userMapper.selectUserList(map);
+			
 			resultMap.put("list", list);
 			resultMap.put("result", "success");
 			resultMap.put("message", Message.MSG_ADD);
@@ -112,4 +117,5 @@ public class UserService {
 		}
 		return resultMap;
 	}
+	
 }

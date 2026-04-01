@@ -8,9 +8,6 @@
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Quill CDN -->
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <style>
         #container{
             align-items: center; 
@@ -53,6 +50,9 @@
         input{
             height: 20px;
         }
+        /* #join-title{
+            text-align: center;
+        } */
     </style>
 </head>
 <body>
@@ -70,8 +70,18 @@
             <div>
                 <label><span class="title">이름 :</span><input v-model="userName" class="inputbtn2"></label>
             </div>
-            <div>프로필 이미지 : 
-                <input type="file" id="file1" name="file1">
+            <div>
+                핸드폰 인증 : 
+                <template v-if="!phoneFlg">
+                    <input v-model="phoneNumber" placeholder="핸드폰 번호를 입력하세요.">
+                    <button @click="fnAuth()">인증번호 발송</button>
+                </template>
+                <template v-else>
+                    <template v-if="!ranFlg">
+                        <input v-model="phoneAuth" :placeholder="timer">
+                        <button @click="fnAuthCheck()">인증번호 확인</button>
+                    </template>
+                </template>
             </div>
             <div>
                 <label>
@@ -100,13 +110,27 @@
                 userId : "",
                 pwd : "",
                 userName : "",
-                addr : ""
+                addr : "",
+                //랜덤문자 전송
+                phoneNumber : "",
+                ranStr : "", // 문자로 받은 랜덤 숫자 
+                phoneAuth : "", // 내가 입력한 숫자
+                phoneFlg : false,
+                ranFlg : false, // 인증번호 정상 입력 시 true
+                //타이머
+                count : 20,
+                timer : "",
+                intervalId : null // 인터벌 id
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             fnJoin: function () {
                 let self = this;
+                if(!self.ranFlg){
+                    alert("문자 인증 후 진행해주세요.");
+                    return;
+                }
                 let param = {
                     userId : self.userId,
                     pwd : self.pwd,
@@ -140,27 +164,56 @@
             fnAddr : function(){
                 window.open("/addr.do","addr","width=500, height=500"); // 팝업 띄우기
             },
-            fnFileAdd : function(boardNo){
-                var self = this;
-                var form = new FormData();
-                form.append( "file1",  $("#file1")[0].files[0] );
-                form.append( "idx",  boardNo); // 임시 pk
-                self.upload(form);  
-            },
-            // 파일 업로드
-            upload : function(form){
-                var self = this;
+            fnAuth : function(){
+                let self = this;
+                if(self.count <= 0){
+                    alert("인증시간이 초과되었습니다.");
+                    clearInterval(self.intervalId);
+                    self.timer = "시간 초과";
+                    return;
+                }
+
+                let param = {
+                    phoneNumber : self.phoneNumber
+                };
                 $.ajax({
-                    url : "/user/profile.dox"
-                , type : "POST"
-                , processData : false
-                , contentType : false
-                , data : form
-                , success:function(response) { 
-                    alert("등록됨!");
-                    location.href="/user/list.do";
-                }	           
-            });
+                    url: "http://localhost:8080/send-one",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        // console.log(data);
+                        if(data.res.groupInfo.status == "SENDING"){
+                            alert("문자가 전송되었습니다.");
+                            self.phoneFlg = true;
+                            self.ranStr = data.ranStr;
+                            self.inteverId = setInterval(self.fnTimer,1000); // 타이머 시작
+                        }else{
+                            alert("에러가 발생했습니다.");
+                        }
+                    }
+                });
+            },
+            fnTimer :  function(){
+                let self = this;
+                let min = "";
+                let sec = "";
+                min = parseInt(self.count / 60);
+                sec = parseInt(self.count % 60);
+                
+                min = min < 10 ? "0" + min : min;
+                sec = sec < 10 ? "0" + sec : sec;
+                self.timer = min + ":" + sec
+                self.count--;
+            },
+            fnAuthCheck : function(){
+                let self = this;
+                if(self.ranStr == self.phoneAuth){
+                    alert("인증되었습니다.");
+                    self.ranFlg = true;
+                }else{
+                    alert("인증번호를 다시 확인해주세요.");
+                }
             }
         }, // methods
         mounted() {

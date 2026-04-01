@@ -24,4 +24,15 @@
    <delete id="deleteUser" parameterType="hashmap">
     	DELETE FROM TBL_USER WHERE USERID = #{userId}
     </delete>
+    
+    <select id="selectUserProfile" parameterType="hashmap" resultType="com.example.demo.model.User">
+        SELECT *
+        FROM TBL_USER_FILE
+        WHERE USERID = #{userId}
+    </select> 
+    
+    <insert id="selectUserFile" parameterType="hashmap">
+    	INSERT INTO TBL_USER_FILE
+    	VALUES(null,#{idx},#{path}, #{fileName}, #{orgName},#{size},#{extName} )
+    </insert>
 </mapper>

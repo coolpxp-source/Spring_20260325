@@ -16,4 +16,8 @@ public interface BoardMapper {
 	public int updateCnt(HashMap<String, Object> map);
 	
 	public int updateBoard(HashMap<String, Object> map);
+	//파일 삽입
+	public int insertBoardFile(HashMap<String, Object> map);
+	//첨부파일 목록
+	public List<Board> selectBoardFile(HashMap<String, Object> map);
 }

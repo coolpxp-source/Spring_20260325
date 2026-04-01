@@ -58,8 +58,17 @@
     </insert>
     
     <select id="selectStu" parameterType="hashmap" resultType="com.example.demo.model.Stu">
-    	SELECT *
-    	FROM STU
+    	SELECT 
+			S.* , 
+		    D3.DNAME AS DNAME1,
+		    D1.DNAME AS DNAME2,
+			D2.DNAME AS DNAME3,
+			P.NAME AS PNAME
+		FROM STU S
+		LEFT JOIN DEPARTMENT D2 ON S.DEPTNO2 = D2.DEPTNO
+		LEFT JOIN PROFESSOR P ON S.PROFNO = P.PROFNO
+		INNER JOIN DEPARTMENT D1 ON S.DEPTNO1 = D1.DEPTNO
+		INNER JOIN DEPARTMENT D3 ON D1.PART = D3.DEPTNO
     	WHERE STUNO = #{stuNo}
     </select>
     
@@ -72,5 +81,37 @@
     	DELETE FROM PROFESSOR
     	WHERE PROFNO = #{profNo}
     </delete>
+    
+    <select id="selectProf" parameterType="hashmap" resultType="com.example.demo.model.Professor">
+    	SELECT 
+    		P.*, 
+    		D1.DNAME AS DNAME2, 
+    		D2.DNAME AS DNAME3
+    	FROM PROFESSOR P
+    	INNER JOIN DEPARTMENT D1 ON P.DEPTNO = D1.DEPTNO
+    	INNER JOIN DEPARTMENT D2 ON D1.PART = D2.DEPTNO
+    	WHERE PROFNO = #{profNo}
+    </select>
+    
+    <update id="updateStu" parameterType="hashmap">
+    	UPDATE STU
+    	SET
+    		NAME = #{stuName},
+    		GRADE = #{grade},
+    		DEPTNO1 = #{deptNo1},
+    		ID = #{id},
+    		PROFNO = #{profNo}
+    	WHERE STUNO = #{stuNo}
+    </update>
+    
+    <update id="updateProf" parameterType="hashmap">
+    	UPDATE PROFESSOR
+    	SET
+    		NAME = #{profName},
+    		POSITION = #{position},
+    		PAY = #{pay},
+    		DEPTNO = #{deptNo}
+    	WHERE PROFNO = #{profNo}
+    </update>
     
 </mapper>

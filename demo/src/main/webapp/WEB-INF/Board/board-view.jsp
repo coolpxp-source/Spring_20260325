@@ -35,6 +35,7 @@
         }
         .bottom-btn{
             margin: 10px auto;
+            margin-right: 10px;
             box-shadow: 1px 1px 2px gray;
         }
     </style>
@@ -64,7 +65,13 @@
                     <th colspan="6">내용</th>
                 </tr>
                 <tr>
-                    <td colspan="6" id="contents">{{info.contents}}</td>
+                    <!-- v-html="" (html 태그적용) -->
+                    <td colspan="6" id="contents">
+                    <div v-html="info.contents"></div>
+                    <div v-for="item in fileList">
+                        <img :src="item.filePath">
+                    </div>
+                    </td> 
                 </tr>
             </table>
             <div >
@@ -82,7 +89,8 @@
             return {
                 // 변수 - (key : value)
                 boardNo : "${boardNo}",
-                info : {}
+                info : {},
+                fileList : []
             };
         },
         methods: {
@@ -99,7 +107,9 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
+                        console.log(data);
                         self.info = data.info;
+                        self.fileList = data.fileList; // console에 찍히는 걸 밖으로 꺼내기
                     }
                 });
             },

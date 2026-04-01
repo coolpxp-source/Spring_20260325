@@ -22,24 +22,26 @@
         tr:nth-child(even){
             background-color: azure;
         }
+        button{
+            margin-top: 10px;
+            margin-right: 10px;
+            box-shadow: 1px 1px 2px gray;
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        <h3>학생 추가</h3>
+         <h3>학생 정보 수정</h3>
          <div id="container">
-            <label>학번 : <input v-model="stuNo" maxlength="4" @input="fnStuNoInput()"></label>
-            <!-- 중복체크 -->
-            <span v-if="stuFlg" style="color: blue;">{{message}}</span> 
-            <span v-else style="color: red;">{{message}}</span>
+            <label>학번 : <input v-model="info.stuNo" maxlength="4" disabled></label>
         </div>
         <div>
-            <label>이름 : <input v-model="stuName"></label>
+            <label>이름 : <input v-model="info.stuName"></label>
         </div>
         <div>
             학년 : 
-            <select v-model="grade">
+            <select v-model="info.grade">
                 <option value="1">1학년</option>
                 <option value="2">2학년</option>
                 <option value="3">3학년</option>
@@ -47,9 +49,12 @@
             </select>
         </div>
         <div>
+            <label>아이디 : <input v-model="info.id"></label>
+        </div>
+        <div>
             <label>
                 학과 : 
-                <select v-model="deptNo">
+                <select v-model="info.deptNo1">
                     <option v-for="item in deptList" :value="item.deptNo">{{item.dName}}</option>
                 </select>
             </label>
@@ -57,17 +62,18 @@
         <div>
             <label>
                 담당교수 : 
-                <select v-model="profNo">
+                <select v-model="info.profNo">
                     <option value="">담당교수 없음</option>
                     <template v-for="item in profList">
-                        <option v-if="deptNo == item.deptNo" :value="item.profNo">{{item.name}}</option>
+                        <option v-if="info.deptNo1 == item.deptNo" :value="item.profNo">{{item.name}}</option>
                     </template>
                 </select>
             </label>
         </div>
         <div>
             <a href="/stu/list.do"><button>목록</button></a>
-            <button @click="fnStuAdd()">학생 추가</button>
+            <a :href="'/stu/view.do?stuNo=' + stuNo"><button>뒤로가기</button></a>
+            <button @click="fnStuEdit()">수정 완료</button>
         </div>
     </div>
 </body>
@@ -78,23 +84,41 @@
         data() {
             return {
                 // 변수 - (key : value)
-                stuNo : "",
-                stuName : "",
-                grade : "1",
+                stuNo : "${map.stuNo}", // 이전 페이지에서 넘겨받은 stuNo 꺼내기
                 deptList : [],
                 profList : [],
-                deptNo : "",
-                profNo : "",
-                message : "",
-                stuFlg : false
+                info : {
+                    stuNo : "",
+                    stuName : "",
+                    grade : "",
+                    deptNo1 : "",
+                    profNo : "",
+                    id : ""
+                }
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
-            fnDeptList: function () {
+            fnGetInfo: function () {
                 let self = this;
                 let param = {
+                    stuNo :  self.stuNo
                 };
+                $.ajax({
+                    url: "http://localhost:8080/stu/info.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        self.info = data.info;
+                        self.info.stuName = data.info.name;
+                    }
+                });
+            },
+            fnDeptList: function () {
+                let self = this;
+                let param = {};
                 $.ajax({
                     url: "http://localhost:8080/dept/list.dox",
                     dataType: "json",
@@ -103,14 +127,12 @@
                     success: function (data) {
                         // console.log(data);
                         self.deptList = data.list;
-                        self.deptNo = data.list[0].deptNo;
                     }
                 });
             },
             fnProfList: function () {
                 let self = this;
-                let param = {
-                };
+                let param = {};
                 $.ajax({
                     url: "http://localhost:8080/prof/list.dox",
                     dataType: "json",
@@ -122,59 +144,30 @@
                     }
                 });
             },
-            fnStuAdd: function () {
+            fnStuEdit: function () {
                 let self = this;
-                let param = {
-                    stuNo : self.stuNo,
-                    stuName : self.stuName,
-                    grade : self.grade,
-                    deptNo : self.deptNo,
-                    profNo : self.profNo,
-                    stuFlg : false
-                };
+                let param = self.info;
                 $.ajax({
-                    url: "http://localhost:8080/stu/add.dox",
+                    url: "http://localhost:8080/stu/edit.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
+                        console.log(data);
                         alert(data.message);
                         if(data.result == 'success'){
-                            location.href="/stu/list.do";
+                            location.href = "/stu/list.do";
                         }
                     }
                 });
-            },
-            fnStuNoInput: function () {
-                let self = this;
-                self.stuNo = self.stuNo.replace(/[^0-9]/g, '');
-
-                if(self.stuNo.length != 4){
-                    self.message = "학번은 4글자 입니다.";
-                    return;
-                }
-                let param = {
-                    stuNo : self.stuNo
-                };
-                $.ajax({
-                    url: "http://localhost:8080/stu/check.dox",
-                    dataType: "json",
-                    type: "POST",
-                    data: param,
-                    success: function (data) {
-                    //   console.log(data.message);
-                    self.message = data.message;
-                    self.stuFlg = data.stuFlg;
-                    }
-                });
-            },
+            }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fnDeptList();
             self.fnProfList();
-            self.fnStuNoInput();
+            self.fnGetInfo();
         }
     });
 

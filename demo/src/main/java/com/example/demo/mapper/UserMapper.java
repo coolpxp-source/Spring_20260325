@@ -3,6 +3,8 @@ package com.example.demo.mapper;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+
+import com.example.demo.model.Board;
 import com.example.demo.model.User;
 
 @Mapper
@@ -16,4 +18,8 @@ public interface UserMapper { //인터페이스
 	
 	// 삭제
 	public int deleteUser(HashMap<String, Object> map);
+	//파일 삽입
+	public int selectUserProfile(HashMap<String, Object> map);
+	//첨부파일 목록
+	public List<User> selectUserFile(HashMap<String, Object> map);
 }
