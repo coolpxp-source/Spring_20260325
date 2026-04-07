@@ -25,10 +25,14 @@
         button{
             box-shadow: 1px 1px 2px gray;
             margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-rigth-margin{
+            margin-right: 10px;
         }
         select{
             box-shadow: 1px 1px 2px gray;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -52,9 +56,16 @@
                             <option v-for="item in deptList" :value="item.deptNo">{{item.dName}}</option>
                         </select>
                 </label>
+                <div class="order-area">
+                    <label><input type="radio" name="order" v-model="orderItem" value="name">이름순</label>
+                    <label><input type="radio" name="order" v-model="orderItem" value="dept">학과순</label>
+                    <label><input type="radio" name="order" v-model="orderItem" value="grade">학년순</label>
+                    <button @click="fnGetList()">조회</button>
+                </div>
                 <div class="table-area">
                     <table>
                         <tr>
+                            <th>선택</th>
                             <th>학생번호</th>
                             <th>이름</th>
                             <th>아이디</th>
@@ -66,6 +77,7 @@
                             <th>삭제</th>
                         </tr>
                         <tr v-for="item in list">
+                            <td><input type="checkbox" v-model="selectList" :value="item.stuNo"></td>
                             <td>{{item.stuNo}}</td>
                             <td>
                                 <a href="javascript:;" @click="fnView(item.stuNo)">{{item.name}}</a>
@@ -82,7 +94,8 @@
                 </div>
             </div>
             <div class="btn-area">
-                <a href="/stu/add.do"><button>학생 추가</button></a>
+                <a href="/stu/add.do"><button class="btn-rigth-margin">학생 추가</button></a>
+                <button @click="fnRemoveAll()">삭제</button>
             </div>
          </div>
 
@@ -98,8 +111,10 @@
                 // 변수 - (key : value)
                 list : [],
                 deptList : [],
+                selectList : [],
                 grade : "",
-                deptNo : ""
+                deptNo : "",
+                orderItem : "grade"
             };
         },
         methods: {
@@ -108,7 +123,8 @@
                 let self = this;
                 let param = {
                     grade : self.grade,
-                    deptNo : self.deptNo
+                    deptNo : self.deptNo,
+                    orderItem : self.orderItem
                 };
                 $.ajax({
                     url: "http://localhost:8080/stu/list.dox",
@@ -158,6 +174,25 @@
             },
             fnView : function(stuNo){
                 pageChange("/stu/view.do",{stuNo : stuNo});
+            },
+            fnRemoveAll : function(){
+                let self = this;
+                var fList = JSON.stringify(self.selectList);
+                let param = {
+                    selectList : fList
+                };
+                $.ajax({
+                    url: "http://localhost:8080/stu-remove-all.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        alert(data.message);
+                        self.selectList = [];
+                        self.fnGetList();
+                    }
+                });
             }
         }, // methods
         mounted() {

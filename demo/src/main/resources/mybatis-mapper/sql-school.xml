@@ -18,7 +18,24 @@
 		<if test="deptNo != null and deptNo != ''">
 			AND P.DEPTNO = #{deptNo}
 		</if>
+		LIMIT #{pageSize} OFFSET #{offSet}
     </select>
+    
+    <!--갯수 카운트-->
+    <select id="selectProfCount" parameterType="hashmap" resultType="int">
+    	SELECT 
+    		COUNT(*)
+    	FROM PROFESSOR P
+    	INNER JOIN DEPARTMENT D1 ON P.DEPTNO = D1.DEPTNO
+    	INNER JOIN DEPARTMENT D2 ON D1.PART = D2.DEPTNO
+    	WHERE 1=1
+    	<if test="position != null and position != ''">
+			AND P.POSITION = #{position}
+		</if>
+		<if test="deptNo != null and deptNo != ''">
+			AND P.DEPTNO = #{deptNo}
+		</if>
+    </select> 
     
     <select id="selectStuList" parameterType="hashmap" resultType="com.example.demo.model.Stu">
     	SELECT 
@@ -39,6 +56,22 @@
 		<if test="deptNo != null and deptNo != ''">
 			AND S.DEPTNO1 = #{deptNo}
 		</if>
+		
+		<choose> <!--예외 처리 가능-->
+			<when test="orderItem == 'name'">
+				ORDER BY NAME
+			</when>
+			<when test="orderItem == 'dept'">
+				ORDER BY D1.DNAME
+			</when>
+			<when test="orderItem == 'grade'">
+				ORDER BY GRADE
+			</when>
+			<!--위에 when 중 아무것도 해당되지 않으면 otherwise 실행-->
+			<otherwise>
+				ORDER BY GRADE
+			</otherwise>
+		</choose>
     </select>
     
     <select id="selectDeptList" parameterType="hashmap" resultType="com.example.demo.model.Dept">
@@ -81,6 +114,15 @@
     	DELETE FROM PROFESSOR
     	WHERE PROFNO = #{profNo}
     </delete>
+    
+    <delete id="deleteAllStu" parameterType="hashmap">
+    	DELETE FROM STU
+    	WHERE STUNO IN
+    	<foreach collection="list" item="item" open="(" separator="," close=")">
+    	    #{item}
+    	</foreach>
+    </delete>
+    
     
     <select id="selectProf" parameterType="hashmap" resultType="com.example.demo.model.Professor">
     	SELECT 

@@ -23,8 +23,11 @@ public class SchoolService {
 		try {
 			List<Professor> list = schoolMapper.selectProfList(map);
 			List<Dept> deptList = schoolMapper.selectDeptList(map);
+			int totalCount =  schoolMapper.selectProfCount(map);
+			
 			resultMap.put("list", list);
 			resultMap.put("deptList", deptList);
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("result", "success");
 			resultMap.put("message", Message.MSG_SEARCH);
 		} catch (Exception e) {
@@ -133,6 +136,23 @@ public class SchoolService {
 		
 		try {
 			 int result = schoolMapper.deleteStu(map);
+			
+			resultMap.put("result", "success");
+			resultMap.put("message", Message.MSG_REMOVE);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+			resultMap.put("message", Message.MSG_SERVER_ERR);
+		}
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> removeAllStu(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			 int result = schoolMapper.deleteAllStu(map);
 			
 			resultMap.put("result", "success");
 			resultMap.put("message", Message.MSG_REMOVE);

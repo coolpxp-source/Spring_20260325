@@ -75,7 +75,10 @@
                 </tr>
             </table>
             <div >
-                <button @click="fnEdit()" class="bottom-btn">수정</button>
+                <div v-if="info.userId == sessionId || sessionRole == 'A'" >
+                    <button>삭제</button>
+                    <button @click="fnEdit()" class="bottom-btn">수정</button>
+                </div>
                 <a href="/board/list.do"><button class="bottom-btn">뒤로가기</button></a>
             </div>
          </div>
@@ -89,6 +92,8 @@
             return {
                 // 변수 - (key : value)
                 boardNo : "${boardNo}",
+                sessionId : "${sessionId}",
+                sessionRole : "${sessionRole}",
                 info : {},
                 fileList : []
             };

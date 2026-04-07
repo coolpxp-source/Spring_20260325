@@ -107,7 +107,7 @@ public class UserController {
 	@ResponseBody // ajax->json 형태로 받을 때 
 	public String view(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap = userService.selectUserView(map);
+//			resultMap = userService.selectUserView(map);
 		return new Gson().toJson(resultMap); 
 	}
 	

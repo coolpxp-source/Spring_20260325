@@ -15,7 +15,7 @@
 			keyColumn="BOARDNO" 
 			keyProperty="boardNo">
     	INSERT INTO TBL_BOARD
-    	VALUES(null, 'user01', #{title}, #{contents}, 0, #{kind}, now(), now())
+    	VALUES(null, #{sessionId}, #{title}, #{contents}, 0, #{kind}, now(), now())
     </insert>
     
     <select id="selectBoard" parameterType="hashmap" resultType="com.example.demo.model.Board">
@@ -48,7 +48,7 @@
     
     <insert id="insertBoardFile" parameterType="hashmap">
     	INSERT INTO TBL_BOARD_FILE
-    	VALUES(null,#{idx},#{path}, #{fileName}, #{orgName},#{size},#{extName} )
+    	VALUES(#{empNo},#{path}, #{fileName}, #{orgName},#{size},#{extName} )
     </insert>
     
 </mapper>

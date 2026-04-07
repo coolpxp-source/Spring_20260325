@@ -21,6 +21,14 @@
         tr:nth-child(even){
             background-color: azure;
         }
+        button{
+            margin-top: 5px;
+            box-shadow: 1px 1px 3px gray;
+        }
+        select{
+            margin: 5px;
+            margin-left: 30px;
+        }
     </style>
 </head>
 <body>
@@ -38,6 +46,7 @@
             </select>
             <table>
                 <tr>
+                    <th>선택</th>
                     <th>학번</th>
                     <th>이름</th>
                     <th>학과</th>
@@ -46,6 +55,7 @@
                     <th>삭제</th>
                 </tr>
                 <tr v-for="item in list"> <!--view 반복문-->
+                    <td><input type="checkbox" v-model="selectList" :value="item.stuNo"></td>
                     <td>{{item.stuNo}}</td>
                     <td>{{item.stuName}}</td>
                     <td>{{item.stuDept}}</td>
@@ -60,6 +70,7 @@
         </div>
         <div>
             <button @click="fnAdd()">학생추가</button>
+            <button @click="fnRemoveAll()">삭제</button>
         </div>
     </div>
 </body>
@@ -71,6 +82,7 @@
             return {
                 // 변수 - (key : value)
                 list :[],
+                selectList : [],
                 keyword : "",
                 dept : ""
             };
@@ -113,6 +125,25 @@
             },
             fnAdd : function(){
                 location.href="stu-add.do";
+            },
+            fnRemoveAll : function(){
+                let self = this;
+                var fList = JSON.stringify(self.selectList);
+                let param = {
+                    selectList : fList
+                };
+                $.ajax({
+                    url: "http://localhost:8080/stu-remove-all.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        alert(data.message);
+                        self.selectList = [];
+                        self.fnGetList();
+                    }
+                });
             }
         }, // methods
         mounted() {

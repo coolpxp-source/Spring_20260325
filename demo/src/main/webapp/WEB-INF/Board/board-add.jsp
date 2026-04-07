@@ -140,7 +140,12 @@
                     success: function (data) {
                         alert(data.message);
                         if(data.result == 'success'){ // 성공 메시지 띄우기
-                            self.fnFileAdd(data.boardNo);
+                            if($("#file1")[0].files[0] != undefined){
+                                self.fnFileAdd(data.boardNo);
+                            }else{
+                                alert("등록되었습니다.");
+                                location.href="/board/list.do";
+                            }
                         }
                     }
                 });

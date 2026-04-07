@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dao.SchoolService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,7 +74,12 @@ public class SchoolController {
 	@ResponseBody // ajax->json 형태로 받을 때 
 	public String list1(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		 resultMap = schoolService.getProfList(map);
+		int pageSize = Integer.parseInt((String)map.get("pageSize"));
+		int offSet = Integer.parseInt((String)map.get("offSet"));
+		map.put("pageSize", pageSize);
+		map.put("offSet", offSet);
+		
+		resultMap = schoolService.getProfList(map);
 		return new Gson().toJson(resultMap); 
 	}
 	
@@ -125,6 +133,20 @@ public class SchoolController {
 	public String remove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = schoolService.removeStu(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	@RequestMapping(value = "/stu-remove-all.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody // ajax->json 형태로 받을 때 
+	public String removeAll(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		String json = map.get("selectList").toString(); 
+		ObjectMapper mapper = new ObjectMapper();
+		List<Object> list = mapper.readValue(json, new TypeReference<List<Object>>(){});
+		map.put("list", list);
+		System.out.println(map);
+		resultMap = schoolService.removeAllStu(map);
+		
 		return new Gson().toJson(resultMap); 
 	}
 	
