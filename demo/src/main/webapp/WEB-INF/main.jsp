@@ -8,6 +8,7 @@
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src ="/js/page-change.js"></script>
     <style>
         table, tr, td, th{
             border : 1px solid black;
@@ -21,35 +22,13 @@
         tr:nth-child(even){
             background-color: azure;
         }
-        input{
-            width: 100px;
-            height: 15px;
-            border-radius: 10px;
-            border: 1px solid gray;
-        }
-        #kakaoImg{
-            width: 100px;
-            height: 30px;
-        }
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-         <div>
-            <div>
-                <label>아이디 : <input v-model="userId"></label>
-            </div>
-            <div>
-                <label>비밀번호 : <input type="password" v-model="pwd"></label>
-            </div>
-            <button @click="fnLogin()">로그인</button>
-            <button>회원가입</button>
-            <div>
-                <a :href="location"><img src="../../img/kakao_login_medium_narrow.png" id="kakaoImg">
-                </a>
-            </div>
-         </div>
+
+
     </div>
 </body>
 </html>
@@ -59,29 +38,23 @@
         data() {
             return {
                 // 변수 - (key : value)
-                userId : "",
-                pwd : "",
-                location : "${location}"
+                
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
-            fnLogin: function () {
+            fnKakao: function () {
                 let self = this;
                 let param = {
-                    userId : self.userId,
-                    pwd : self.pwd
+                    code : self.code
                 };
                 $.ajax({
-                    url: "http://localhost:8080/login.dox",
+                    url: "http://localhost:8080/kakao.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        alert(data.message);
-                        if(data.loginResult){
-                            location.href=data.url;
-                        }
+                        console.log(data);
                     }
                 });
             }
@@ -89,6 +62,9 @@
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
+            const queryParams = new URLSearchParams(window.location.search);
+            self.code = queryParams.get('code') || ''; 
+            self.fnKakao();
         }
     });
 
